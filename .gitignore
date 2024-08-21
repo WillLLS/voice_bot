@@ -1,0 +1,7 @@
+.venv*
+__pycache__/
+db/__pycache__/
+utils/__pycache__/
+db/database.db
+config.py
+journal
