@@ -1,3 +1,9 @@
+"""
+    @Author: HunTon
+    @contact: https://x.com/huntoncrypto 🤝
+    @info: V1.0 - 21.08.2024
+"""
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.types import ReplyKeyboardMarkup, LinkPreviewOptions
 from aiogram.filters import CommandStart
@@ -126,8 +132,6 @@ async def handle_option(message: types.Message, state: FSMContext):
         
     customer : customer_t = Customer.get(message.from_user.id)
     
-    
-    
     # ✅
     if message.text == button_menu[0]: # Gagner
         print("[+] Click on Gagner")
@@ -164,7 +168,6 @@ async def handle_option(message: types.Message, state: FSMContext):
                                                    customer.total_vocal,
                                                    Referals.count_referals(customer.referal_id)))
          
-    
     # ✅
     elif message.text == button_menu[2]: # Statistique
         print("[+] Click on Statistique")
@@ -177,9 +180,8 @@ async def handle_option(message: types.Message, state: FSMContext):
         
         # Fake Data
         #await message.answer(msg_statistics.format(100, 1000, 10000))
-        
-        
-        
+    
+    # ✅
     elif message.text == button_menu[3]: # Retrait de fonds 
         print("[+] Click on Retrait de fonds")
         
@@ -264,7 +266,6 @@ async def handle_option(message: types.Message, state: FSMContext):
             await handle_finish_vocal(message)
             await state.update_data(waiting_voice=0) 
     
-    
     elif message.text in button_withdraw[:5]: # Withdraw Methods
         print(f"[+] Click on {message.text}")
         
@@ -284,10 +285,10 @@ async def handle_option(message: types.Message, state: FSMContext):
         await state.update_data(waiting_amount=0)  
         
         keyboard_builder = ReplyKeyboardBuilder()   
-        keyboard_builder.button(text=button_menu[5])   # Menu principal      
+        keyboard_builder.button(text=button_withdraw[5])   # Menu principal      
         keyboard_builder.adjust(1, ) 
                 
-        if (int(message.text) > 250) and (int(message.text) > customer.balance):
+        if (int(message.text) > 250) and (int(message.text) < customer.balance):
             msg = msg_withdraw_confirm.format(message.text)
                     
         elif (int(message.text) > customer.balance):
@@ -305,9 +306,15 @@ async def handle_option(message: types.Message, state: FSMContext):
         await state.update_data(waiting_amount=0)   
         
         await message.answer("Sélectionnez un élément de menu 👇", reply_markup=create_reply_keyboard())
-        await state.update_data(waiting_voice=0)
-
-
+        
+    # Update message 'message non confirmé'
+    elif waiting_voice ==1 and waiting_amount == 0:
+        await message.answer("Message non confirmé")
+        
+    """
+    @contact: https://x.com/huntoncrypto 🤝
+    """
+        
 @router.callback_query()
 async def handle_callback_query(call: CallbackQuery, state: FSMContext):
     await call.answer()
