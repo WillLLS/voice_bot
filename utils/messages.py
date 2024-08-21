@@ -175,4 +175,11 @@ msg_withdraw_error = "❌ Le montant du retrait est supérieur à votre solde"
 msg_withdraw_minimal = "❌ Le montant du retrait est inférieur à 250 CHF"
 
 msg_withdraw_confirm = """
-📤 Demande de retrait de {} CHF confirmée"""
+Rejoignez le canal Telegram et consultez les derniers messages pour retirer votre argent."""
+
+btn_follow_channel = "Abonnez-vous à la chaîne"
+link_follow_channel = "https://t.me/+X_rNaEmzJd8xZmYy"
+
+btn_condition_done = "J'ai fait les conditions ✅"
+
+msg_pending_withdraw = "Votre demande de retrait est en cours de traitement, le paiement peut prendre juqu'à 3 ou 4 jours ouvrables.\n\nMerci d'avoir choisi {}"

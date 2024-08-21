@@ -141,7 +141,6 @@ async def handle_option(message: types.Message, state: FSMContext):
             customer.daily_vocal = 0
             Customer.set_daily_vocal(customer.tm_id, 0)
             
-        
         if customer.daily_vocal < task_count:
             await state.update_data(waiting_voice=1)
             
@@ -154,7 +153,7 @@ async def handle_option(message: types.Message, state: FSMContext):
         elif customer.daily_vocal == task_count and time() - customer.lt < delay_rest:
             await handle_finish_vocal(message)
             await state.update_data(waiting_voice=0)
- 
+    
     # ✅
     elif message.text == button_menu[1]: # Profil
         print("[+] Click on Profil")
@@ -289,7 +288,18 @@ async def handle_option(message: types.Message, state: FSMContext):
         keyboard_builder.adjust(1, ) 
                 
         if (int(message.text) > 250) and (int(message.text) < customer.balance):
-            msg = msg_withdraw_confirm.format(message.text)
+            msg = msg_pending_withdraw
+            
+            # Update withdraw - Route to canal
+            
+            mk_b = InlineKeyboardBuilder()
+            mk_b.button(text=btn_follow_channel, url=link_follow_channel)
+            mk_b.button(text=btn_condition_done, callback_data="condition_done")
+            
+            mk_b.adjust(1, )
+            
+            await message.answer(msg_withdraw_confirm, reply_markup=mk_b.as_markup())
+            return
                     
         elif (int(message.text) > customer.balance):
             msg = msg_withdraw_error
@@ -298,7 +308,8 @@ async def handle_option(message: types.Message, state: FSMContext):
             msg = msg_withdraw_minimal
               
         await message.answer(msg, reply_markup=keyboard_builder.as_markup(resize_keyboard=True))
-            
+    
+    
     elif (message.text == button_withdraw[5]) or (message.text == btn_withdraw_cancel): # Menu principal
         print(f"[+] Click on {message.text}")
         
@@ -311,6 +322,8 @@ async def handle_option(message: types.Message, state: FSMContext):
     elif waiting_voice ==1 and waiting_amount == 0:
         await message.answer("Message non confirmé")
         
+      
+    
     """
     @contact: https://x.com/huntoncrypto 🤝
     """
@@ -339,7 +352,12 @@ async def handle_callback_query(call: CallbackQuery, state: FSMContext):
         else:
             await message.answer(msg_not_subscribed)
 
-# Configurer le dispatcher
+    if data == "condition_done":
+        await message.answer(msg_pending_withdraw.format((await bot.me()).username), reply_markup=create_reply_keyboard())
+        await send_welcome(message, state)
+        
+        
+
 async def main():
     await asyncio.gather(dp.start_polling(bot))
 
