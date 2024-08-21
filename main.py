@@ -108,8 +108,9 @@ async def handle_finish_vocal(message: types.Message):
 @router.message()
 async def handle_option(message: types.Message, state: FSMContext):
         
-    income      = 5     # $ for each vocal task
-    task_count  = 10     # Number of vocal tasks per day
+    income      = 5         # $ for each vocal task
+    task_count  = 10        # Number of vocal tasks per day
+    delay_rest  = 86400     # 24 hours in seconds
     
     cache_data = await state.get_data()
     
@@ -125,12 +126,15 @@ async def handle_option(message: types.Message, state: FSMContext):
         
     customer : customer_t = Customer.get(message.from_user.id)
     
+    
+    
     # ✅
     if message.text == button_menu[0]: # Gagner
         print("[+] Click on Gagner")
         await state.update_data(waiting_amount=0)
         
-        if time() - customer.lt > 86400 and customer.daily_vocal != 0:
+        if time() - customer.lt > delay_rest and customer.daily_vocal != 0:
+            customer.daily_vocal = 0
             Customer.set_daily_vocal(customer.tm_id, 0)
             
         
@@ -143,7 +147,7 @@ async def handle_option(message: types.Message, state: FSMContext):
                                                      customer.daily_vocal * income))
             await message.answer(msg_ask_vocal.format(random.choice(gpt_samples)))
             
-        elif customer.daily_vocal == task_count and time() - customer.lt < 86400:
+        elif customer.daily_vocal == task_count and time() - customer.lt < delay_rest:
             await handle_finish_vocal(message)
             await state.update_data(waiting_voice=0)
  
@@ -247,7 +251,7 @@ async def handle_option(message: types.Message, state: FSMContext):
                                                      customer.daily_vocal * income))
             await message.answer(msg_ask_vocal.format(random.choice(gpt_samples)))
         
-        elif customer.daily_vocal == task_count and time() - customer.lt < 86400:
+        elif customer.daily_vocal == task_count and time() - customer.lt < delay_rest:
             Customer.set_daily_vocal(customer.tm_id, customer.daily_vocal)
             
             customer.balance += income
