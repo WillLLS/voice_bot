@@ -248,6 +248,15 @@ async def handle_option(message: types.Message, state: FSMContext):
             await message.answer(msg_ask_vocal.format(random.choice(gpt_samples)))
         
         elif customer.daily_vocal == task_count and time() - customer.lt < 86400:
+            Customer.set_daily_vocal(customer.tm_id, customer.daily_vocal)
+            
+            customer.balance += income
+            Customer.set_balance(customer.tm_id, customer.balance)
+            
+            Customer.set_total_vocal(customer.tm_id, customer.total_vocal + 1)
+            
+            Customer.set_lt(customer.tm_id, int(time()))
+            
             await handle_finish_vocal(message)
             await state.update_data(waiting_voice=0) 
     
@@ -285,7 +294,6 @@ async def handle_option(message: types.Message, state: FSMContext):
               
         await message.answer(msg, reply_markup=keyboard_builder.as_markup(resize_keyboard=True))
             
-    
     elif (message.text == button_withdraw[5]) or (message.text == btn_withdraw_cancel): # Menu principal
         print(f"[+] Click on {message.text}")
         
