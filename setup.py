@@ -30,7 +30,8 @@ if __name__ == "__main__":
         exit()    
     
     for i in tqdm(range(int(res))):
-        db_creation.cur.execute(f"INSERT INTO customers VALUES ('{i}', 'Fake', 'fake', {i}, {randint(0, 120)}, 0, 0, '{str(uuid4())[:8]}')")
+        vocal_count = randint(0, 120)
+        db_creation.cur.execute(f"INSERT INTO customers VALUES ('{str(uuid4())[:8]}', 'Fake', 'fake', {vocal_count*5}, {vocal_count}, 0, 0, '{str(uuid4())[:8]}')")
     
     
     

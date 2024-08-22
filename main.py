@@ -44,12 +44,12 @@ def is_int_convertible(value):
     except ValueError:
         return False
 
-button_menu = ["Gagner", 
+button_menu = ["🎉 Gagner", 
     "👤 Profil",            "📊 Statistique", 
     "💳 Retrait de fonds",     "💼 Argent pour inviter un ami", 
-    "💰 Plus d'argent",        "Meilleurs joueurs"]
+    "💰 Plus d'argent",        "🏅 Meilleurs joueurs"]
 
-button_withdraw = ["Cembra Bank", "Revolut", "UBS", "VISA/MASTER", "PayPal", "⬅ Menu principal"]
+button_withdraw = ["UBS", "Banque Cantonale", "Raiffeisen", "Visa/Mastercard", "PayPal", "⬅ Menu principal"]
 
 # Créer une reply keyboard avec le builder
 def create_reply_keyboard() -> ReplyKeyboardMarkup:
@@ -107,6 +107,9 @@ async def handle_finish_vocal(message: types.Message):
     
     mk_b = InlineKeyboardBuilder()
     mk_b.button(text=btn_finish_vocal, url=link_finish_vocal)
+    mk_b.button(text=btn_finish_vocal_2, url=link_finish_vocal_2)
+    
+    mk_b.adjust(1, )
     
     await message.answer(msg_finish_vocal, reply_markup=mk_b.as_markup())
 
@@ -281,7 +284,7 @@ async def handle_option(message: types.Message, state: FSMContext):
         print(f"[+] Withdraw amount: {message.text}")
         
         await state.update_data(waiting_voice=0) 
-        await state.update_data(waiting_amount=0)  
+        await state.update_data(waiting_amount=1)  
         
         keyboard_builder = ReplyKeyboardBuilder()   
         keyboard_builder.button(text=button_withdraw[5])   # Menu principal      
@@ -297,6 +300,8 @@ async def handle_option(message: types.Message, state: FSMContext):
             mk_b.button(text=btn_condition_done, callback_data="condition_done")
             
             mk_b.adjust(1, )
+            
+            await state.update_data(waiting_amount=0)  
             
             await message.answer(msg_withdraw_confirm, reply_markup=mk_b.as_markup())
             return
@@ -363,7 +368,8 @@ async def main():
 
 if __name__ == '__main__':
     #logging.basicConfig(level=logging.INFO)
-    asyncio.get_event_loop().run_until_complete(dp.start_polling(bot))
+    print("[+] Bot started")
+    asyncio.run(main())
     
     
 
